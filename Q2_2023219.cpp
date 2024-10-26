@@ -23,6 +23,7 @@ public:
     bool operator <(const Person&) const;
     bool operator >(const Person&) const;
     bool operator !=(const string&) const; 
+    const string& getName() const {return Name;}
     void Show() const;
 };
 
@@ -44,7 +45,7 @@ private:
 public:
     DLList() : head(nullptr) {};
     void Insert(const Person&);
-    Person& Find(string) const;
+    const Person& Find(string) const;
     void Show() const;
 };
 
@@ -83,12 +84,13 @@ void DLList::Show() const
     cout << endl << "[ ";
     while(Position)
     {
-        
+        cout << Position->data.getName() << " -> ";
+        Position = Position->next;
     }
-    cout << "NULL (POINTER) ]"; 
+    cout << " NULL (pointer) ]"; 
 }
 
-Person& DLList::Find(string Name) const
+const Person& DLList::Find(string Name) const
 {
     Node* Position = head;
     while (Position->data != Name)
