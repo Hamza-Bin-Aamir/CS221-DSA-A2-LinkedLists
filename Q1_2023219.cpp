@@ -93,36 +93,41 @@ void SLList::InsertLoop(int TargetPosition)
 // Assumes that a loop indeed exists
 void SLList::FixLoops()
 {
-    Node* Slow = head; Node* Fast = nullptr; Node* Final = nullptr; Node* Offender = nullptr;
-    int idx = 0; int offender_idx = 0;
+    Node* Slow = head; Node* Fast = head; Node* Final = head; Node* Offender = nullptr;
+    int idx = 1; int offender_idx = 1; int offender_data = 0;
 
-    while(Slow != Fast)
-    {
-        if (Fast == nullptr) { Fast = head; }
-
+    while (Fast) {
         Fast = Fast->next->next;
         Slow = Slow->next;
-    }
 
-    while(Final != Slow)
-    {
-        if (Final == nullptr) { Final = head; }
-        Slow = Slow->next;
-        Final = Final->next;
-        idx++;
-    }
+        if (Slow == Fast)
+        {
+            while(Final != Slow)
+            {
+                Slow = Slow->next;
+                Final = Final->next;
+                idx++;
+            }
 
-    Offender = Final; offender_idx = idx;
+            Offender = Final; offender_idx = idx; offender_data = Final->data;
 
-    while (Final->next != Offender)
-    {
-        Final = Final->next;
-        idx++;
+            while (Final->next != Offender)
+            {
+                Final = Final->next;
+                idx++;
+            }
+
+            cout << endl;
+            cout << "Loop removed from Node #" << idx << " to Node #" << offender_idx;
+            cout << endl << "The value contained at the loop was: " << offender_data;
+            Final->next = nullptr;
+            return;
+        }
+
     }
 
     cout << endl;
-    cout << "Loop removed from Node #" << idx+1 << " to Node #" << offender_idx;
-    Final->next = nullptr;
+    cout << "This list has no loops!";
 }
 
 void SLList::Show()
