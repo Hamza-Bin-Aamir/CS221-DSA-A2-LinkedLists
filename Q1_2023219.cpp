@@ -1,4 +1,4 @@
-// Loop Detector v1.0 by Hamza Bin Aamir
+// Loop Detector v1.2 by Hamza Bin Aamir
 
 // ------ LIBRARIES ------ 
 #include <iostream>
