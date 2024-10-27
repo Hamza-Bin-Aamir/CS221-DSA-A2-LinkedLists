@@ -1,5 +1,6 @@
 // DLL Swapper v1.0
 #include <iostream>
+#include <exception> // to add special exceptions
 
 // ------ PRE-PROC CONSTS ------ 
 #define NO_ERRORS 0
@@ -28,7 +29,24 @@ public:
 // ------ ENTRY POINT ------ 
 int main()
 {
+    DLList A;
+    A.PushBack(1);
+    A.PushBack(3);
+    A.PushBack(4);
+    A.PushBack(5);
+    A.Show();
 
+    try
+    {
+        A.Swap(3, 4);
+    }
+    catch(...)
+    {
+        cout << endl << "The swap operation was interrupted due to one or more nodes not being found.";
+    }
+    A.Show();
+
+    return NO_ERRORS;
 }
 
 // ------ DOUBLY LINKED LIST FUNCTION DEFINITIONS ------
@@ -96,30 +114,49 @@ void DLList::Swap(const int& A, const int& B)
 
     if (!NodeA || !NodeB)
     {
-        cout << "One or more elements not found!";
+        throw domain_error("");
         return;
     }
 
-    Node* Buffer = nullptr;
+    // Handle adjacent nodes
+    if (NodeA->next == NodeB)
+    {
+        NodeA->next = NodeB->next;
+        if (NodeB->next) NodeB->next->prev = NodeA;
+        NodeB->prev = NodeA->prev;
+        if (NodeA->prev) NodeA->prev->next = NodeB;
+        NodeB->next = NodeA;
+        NodeA->prev = NodeB;
+    }
+    else if (NodeB->next == NodeA)
+    {
+        NodeB->next = NodeA->next;
+        if (NodeA->next) NodeA->next->prev = NodeB;
+        NodeA->prev = NodeB->prev;
+        if (NodeB->prev) NodeB->prev->next = NodeA;
+        NodeA->next = NodeB;
+        NodeB->prev = NodeA;
+    }
+    else
+    {
+        // Swap the next pointers of the nodes before the nodes to be swapped
+        if (NodeA->prev) NodeA->prev->next = NodeB;
+        if (NodeB->prev) NodeB->prev->next = NodeA;
 
+        // Swap the previous pointers of the nodes after the nodes to be swapped
+        if (NodeA->next) NodeA->next->prev = NodeB;
+        if (NodeB->next) NodeB->next->prev = NodeA;
 
-    // Swap the next pointers of the nodes before the nodes to be swapped. this comment makes more sense if you draw the nodes tbh
-    if (NodeA->prev && NodeA->prev != NodeB) NodeA->prev->next = NodeB;
-    if (NodeB->prev && NodeB->prev != NodeA) NodeB->prev->next = NodeA;
+        // Swap the prev pointers
+        Node* Buffer = NodeA->prev;
+        NodeA->prev = NodeB->prev;
+        NodeB->prev = Buffer;
 
-    // Swap the previous pointers of the nodes after the nodes to be swapped
-    if (NodeA->next && NodeA->next != NodeB) NodeA->next->prev = NodeB;
-    if (NodeB->next && NodeB->next != NodeA) NodeB->next->prev = NodeA;
-
-    // Swap the prev pointers
-    Buffer = NodeA->prev;
-    NodeA->prev = NodeB->prev;
-    NodeB->prev = Buffer;
-
-    // Swap the next pointers
-    Buffer = NodeB->next;
-    NodeB->next = NodeA->next;
-    NodeA->next = Buffer;
+        // Swap the next pointers
+        Buffer = NodeA->next;
+        NodeA->next = NodeB->next;
+        NodeB->next = Buffer;
+    }
 
     // Modify the head if it is one of the nodes
     if (head == NodeA) head = NodeB;
