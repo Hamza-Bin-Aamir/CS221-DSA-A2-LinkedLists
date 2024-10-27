@@ -1,4 +1,4 @@
-// Address Book v1.0 by Hamza Bin Aamir
+// Address Book v2.0 by Hamza Bin Aamir
 
 // ------ LIBRARIES ------ 
 #include <iostream>
