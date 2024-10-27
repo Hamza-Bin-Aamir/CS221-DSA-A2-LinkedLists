@@ -61,7 +61,7 @@ void DLList::PushBack(const int& Data)
         return;
     }
 
-    // CASE B: Insert at the end
+    // CASE B: There are some elements in the list
     Node* position = head;
     while (position->next)
     {
