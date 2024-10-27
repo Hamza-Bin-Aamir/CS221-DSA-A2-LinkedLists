@@ -4,6 +4,7 @@
 #include <iostream>
 #include <exception> // to add special exceptions
 #include <string> // to use the getline function
+#include <limits> // used in conjunction with cin.ignore
 
 // ------ PRE-PROC CONSTS ------ 
 #define NO_ERRORS 0
@@ -20,7 +21,7 @@ private:
     string Address;
     string PhoneNumber;
 public:
-    Person(string Name, string Address, string PhoneNumber): Name(Name), Address(Address), PhoneNumber(PhoneNumber) {};
+    Person(const string& Name, const string& Address, const string& PhoneNumber): Name(Name), Address(Address), PhoneNumber(PhoneNumber) {};
     bool operator <(const Person&) const;
     bool operator >(const Person&) const;
     bool operator !=(const string&) const; 
@@ -28,23 +29,22 @@ public:
     void Show() const;
 };
 
-// We will be using these nodes for our DLL
+// We will be using these nodes for our SLL
 struct Node
 {
     Person data;
     Node* next;
-    Node* prev;
 
-    Node(const Person& data, Node* next, Node* prev) : data(data), next(next), prev(prev) {};
+    Node(const Person& data, Node* next) : data(data), next(next) {};
 };
 
-// An implementation of a doubly linked list with Person classes as our data and special alphabetical insertions
-class DLList
+// An implementation of a singly linked list with Person classes as our data and special alphabetical insertions
+class SLList
 {
 private:
     Node* head;
 public:
-    DLList() : head(nullptr) {};
+    SLList() : head(nullptr) {};
     void Insert(const Person&);
     void Insert(const string&, const string&, const string&);
     const Person& Find(string) const;
@@ -56,9 +56,9 @@ int main()
 {
     cout << "Welcome to Address Book v1.0!";
     bool Continue = true;
-    DLList AddressBook;
+    SLList AddressBook;
     string BufferA, BufferB, BufferC;
-    uint8_t choice = 0; // we can use a smaller integer to optimise
+    int choice = 0; // we can use a smaller integer to optimise
 
     while (Continue)
     {
@@ -68,7 +68,7 @@ int main()
         cout << endl << "\t3. Show the list";
         cout << endl << "\t4. Find a person (by Name)";
         cout << endl << "\t5. Exit";
-        cout << "Please enter your choice (int): ";
+        cout << endl << "Please enter your choice (int): ";
         cin >> choice;
 
         switch (choice)
@@ -78,16 +78,17 @@ int main()
             break;
 
             case 1:
-                cout << endl << "Please enter the person's name: ";
+                cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                cout << "Please enter the person's name: ";
                 getline(cin, BufferA); // we need to use getline because it may contain spaces
-                cout << endl << "Please enter " << BufferA << "'s phone number: ";
+                cout << "Please enter " << BufferA << "'s phone number: ";
                 getline(cin, BufferB);
-                cout << endl << "Please enter " << BufferA << "'s address: ";
+                cout << "Please enter " << BufferA << "'s address: ";
                 getline(cin, BufferC);
 
                 AddressBook.Insert(BufferA, BufferB, BufferC);
 
-                cout << endl << "SUCCESS! List is currently: ";
+                cout << "SUCCESS! List is currently: ";
                 AddressBook.Show();
             break;
 
@@ -98,7 +99,7 @@ int main()
                 AddressBook.Insert("Azeem Liaqat", "+92 (002) 45353", "Hostel 10 Room 66B");
                 AddressBook.Insert("Muhammad Sanawar", "+92 (003) 789987", "Hostel 10 Room 90");
 
-                cout << endl << "SUCCESS! List is currently: ";
+                cout << "SUCCESS! List is currently: ";
                 AddressBook.Show();
             break;
 
@@ -107,52 +108,60 @@ int main()
             break;
 
             case 4:
-                cout << endl << "Please enter the person's name: ";
+                cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                cout << "Please enter the person's name: ";
                 getline(cin, BufferA); 
 
                 try{
-                    AddressBook.Find(BufferA);
+                    AddressBook.Find(BufferA).Show();
                 }
                 catch(...){
-                    cout << endl << "NO MATCHES";
+                    cout << "NO MATCHES";
                 }
             break;
         }
     }
 
-    cout << endl << "EXITING...";
+    cout << "EXITING...";
     return NO_ERRORS;
 }
 
 // ------ DLList Function Definitions ------
 
-void DLList::Insert(const Person& data)
+void SLList::Insert(const Person& data)
 {
+    Node* insertion = new Node(data, nullptr); 
     // CASE A: There are no elements in the list
     if (!head)
     {
-        head = new Node(data, nullptr, nullptr);
+        head = insertion;
+        return;
     }
 
-    // CASE B: List contains some elements
-    Node* insertion = new Node(data, nullptr, nullptr);
+    // CASE B: Insert at the beginning
+    if (data < head->data) {
+        insertion->next = head;
+        head = insertion;
+        return;
+    }
+
+    // CASE C: Insert in the middle or at the end
     Node* position = head;
-    while (position < insertion && position)
-    {
+    while (position->next && position->next->data < data) {
         position = position->next;
     }
-    insertion->prev = position->prev;
-    insertion->next = position;
-    insertion->prev->next = insertion;
+
+    insertion->next = position->next;
+    position->next = insertion;
 }
 
-void DLList::Insert(const string& Name, const string& PhoneNo, const string& Address)
+void SLList::Insert(const string& Name, const string& PhoneNo, const string& Address)
 {
-    Person* insertion = new Person(Name, Address, PhoneNo);
-    DLList::Insert(*insertion);
+    Person insertion = Person(Name, Address, PhoneNo);
+    Insert(insertion);
 }
 
-void DLList::Show() const
+void SLList::Show() const
 {
     Node* Position = head;
 
@@ -165,7 +174,7 @@ void DLList::Show() const
     cout << " NULL (pointer) ]"; 
 }
 
-const Person& DLList::Find(string Name) const
+const Person& SLList::Find(string Name) const
 {
     Node* Position = head;
     while (Position->data != Name)
