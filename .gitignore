@@ -36,3 +36,5 @@
 .vscode/tasks.json
 *.ilk
 *.pdb
+*.zip
+*.url
