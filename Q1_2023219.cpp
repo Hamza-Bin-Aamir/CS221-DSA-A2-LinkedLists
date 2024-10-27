@@ -5,6 +5,7 @@
 
 // ------ PRE-PROC CONSTS ------ 
 #define NO_ERRORS 0
+#define LOOP_POSITION 2
 
 using namespace std; // so we don't have to repeatedly say std::cout, std::cin
 
@@ -39,7 +40,7 @@ int main()
     A.PushFront(5);
     A.Show();
     
-    A.InsertLoop(2);
+    A.InsertLoop(LOOP_POSITION);
 
     A.FixLoops();
     A.Show();

@@ -4,6 +4,9 @@
 
 // ------ PRE-PROC CONSTS ------ 
 #define NO_ERRORS 0
+#define SWAP_POS_A 3
+#define SWAP_POS_B 4
+
 using namespace std; // so we don't have to repeatedly say std::cout, std::cin
 
 // ------ CLASS DEFS ------
@@ -38,7 +41,7 @@ int main()
 
     try
     {
-        A.Swap(3, 4);
+        A.Swap(SWAP_POS_A, SWAP_POS_B);
     }
     catch(...)
     {

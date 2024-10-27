@@ -4,6 +4,7 @@
 
 // ------ PRE-PROC CONSTS ------ 
 #define NO_ERRORS 0
+#define NEW_HEAD_POS 3
 
 using namespace std; // so we don't have to repeatedly say std::cout, std::cin
 
@@ -41,7 +42,7 @@ int main()
 
     cout << "Before:\t"; A.Show();
 
-    try { A.MoveHead(3); }
+    try { A.MoveHead(NEW_HEAD_POS); }
     catch(...) { cout << "The head could not be moved to the specified position."; }
     
     cout << endl << "After:\t"; A.Show();
