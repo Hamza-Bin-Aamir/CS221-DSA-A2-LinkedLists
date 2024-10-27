@@ -192,7 +192,7 @@ const Person& SLList::Find(string Name) const
 // ------ Person Function Definitions ------
 bool Person::operator !=(const string& Name) const
 {
-    if(this->Name == Name)
+    if(this->Name != Name)
     {
         return true;
     }
